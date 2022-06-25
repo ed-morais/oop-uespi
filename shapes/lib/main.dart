@@ -1,5 +1,8 @@
 import 'dart:math';
+
 import './shapes.dart';
+
+int random(int min, int max) => min + Random().nextInt((max - min).abs() + 1);
 
 void showShapes(List<Shape> shapes) {
   print('SHAPES\t\tAREA\tPERIMETER');
@@ -12,26 +15,36 @@ void showShapes(List<Shape> shapes) {
 }
 
 void main() {
-  Random rnd = Random();
   List<Shape> shapes = [];
 
   for (int i = 0; i < 10; i++) {
-    final int number = rnd.nextInt(101);
-    final int h = 5 + rnd.nextInt(11); // h = 5~15
-    final int w = 5 + rnd.nextInt(11); // w = 5~15
+    Shape? shape;
 
-    if (number < 30) {
-      final Rectangle rect = Rectangle(
-        height: h.toDouble(),
-        width: w.toDouble(),
+    final int number = random(0, 100);
+    final double s1 = random(5, 15).toDouble();
+    final double s2 = random(5, 15).toDouble();
+    final double s3 = random(5, 15).toDouble();
+
+    if (number < 25) {
+      try {
+        shape = Triangle(
+          side1: s1,
+          side2: s2,
+          side3: s3,
+        );
+      } catch (error) {}
+    } else if (number < 50) {
+      shape = Rectangle(
+        height: s1,
+        width: s2,
       );
-      shapes.add(rect);
-    } else if (number < 60) {
-      final Square sqre = Square(width: w.toDouble());
-      shapes.add(sqre);
+    } else if (number < 75) {
+      shape = Square(width: s2);
     } else {
-      final Circle circle = Circle(radius: h.toDouble());
-      shapes.add(circle);
+      shape = Circle(radius: s1);
+    }
+    if (shape != null) {
+      shapes.add(shape);
     }
   }
   showShapes(shapes);
