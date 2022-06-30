@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 class Number {
-  int _number;
+  final int _number;
 
   Number([this._number = 0]);
 

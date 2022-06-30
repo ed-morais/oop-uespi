@@ -1,5 +1,3 @@
-import 'dart:isolate';
-
 class Elevator {
   final int _floorCount; // número de andares do prédio
   final int _capacity; // Capacidade do elevator
