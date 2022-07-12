@@ -4,20 +4,33 @@ enum TransactionType {
 }
 
 class Transaction {
-  final DateTime date;
   final TransactionType type;
   final double ammount;
-  final String description;
+  final DateTime date;
+  final String? comment;
 
   Transaction({
-    required date,
-    required type,
-    required ammount,
-    required description,
-  })  : date = date,
-        type = type,
+    required TransactionType transactionType,
+    required double ammount,
+    DateTime? dateTime,
+    String? description,
+  })  : type = transactionType,
         ammount = ammount.abs(),
-        description = description;
+        date = dateTime ?? DateTime.now(),
+        comment = description;
 
   double get value => (type == TransactionType.deposit) ? ammount : -ammount;
+
+  String get description {
+    if (comment != null) {
+      return comment!;
+    }
+
+    if (type == TransactionType.deposit) {
+      return 'Depósito';
+    } else if (type == TransactionType.withdraw) {
+      return 'Saque';
+    }
+    return 'Transação desconhecida';
+  }
 }
