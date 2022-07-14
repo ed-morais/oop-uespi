@@ -8,8 +8,8 @@ class SpecialAccount extends Account {
     required int agency,
     required int number,
     required String name,
-    required double limitAmmount,
-  })  : limit = limitAmmount,
+    required double limitValue,
+  })  : limit = limitValue,
         super.open(
           type: AccountType.special,
           agency: agency,

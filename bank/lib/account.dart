@@ -2,7 +2,6 @@ import 'package:bank/exceptions.dart';
 import 'package:bank/helpers.dart';
 
 import 'transaction.dart';
-import 'transaction_factory.dart';
 
 enum AccountType {
   current,
@@ -24,9 +23,7 @@ abstract class Account {
     required this.agency,
     required this.number,
     required this.name,
-  }) {
-    _transactions.addAll(TransactionFactory.makeFixedTransactions());
-  }
+  });
 
   void _addTransaction(Transaction transaction) =>
       _transactions.add(transaction);
@@ -87,8 +84,36 @@ abstract class Account {
   }
 
   void transfer(Account sourceAccount, double value) {
-    sourceAccount.withdraw(value);
-    deposit(value);
+    Transaction trans;
+
+    if (this == sourceAccount) {
+      throw InvalidSourceAccountError();
+    }
+
+    trans = Transaction(
+      transactionType: TransactionType.transfer,
+      ammount: value,
+      transactionData: '$agency/$number',
+    );
+    sourceAccount.withdraw(value, transaction: trans);
+
+    trans = Transaction(
+      transactionType: TransactionType.transfer,
+      ammount: value,
+      transactionData: '${sourceAccount.agency}/${sourceAccount.number}',
+    );
+    deposit(value, transaction: trans);
+  }
+
+  void payment(double value, {String? document}) {
+    Transaction trans;
+
+    trans = Transaction(
+      transactionType: TransactionType.payment,
+      ammount: value,
+      transactionData: document,
+    );
+    withdraw(value, transaction: trans);
   }
 
   void statement() {

@@ -14,9 +14,3 @@ class InsuficientFundsError extends TransactionError {
   @override
   String toString() => 'Insuficient funds';
 }
-
-class InvalidSourceAccountError extends TransactionError {
-  @override
-  String toString() =>
-      'Conta de origem inválida (mesma conta de origem e destino)';
-}
