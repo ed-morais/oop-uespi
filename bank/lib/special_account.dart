@@ -27,13 +27,13 @@ class SpecialAccount extends Account {
     super.statement();
 
     String date = ''.padLeft(5);
-    String desc = stringWidth('LIMITE', 20);
+    String desc = formatString('LIMITE', 20);
     String value = formatNumber(limit, 10);
 
     print('$date $desc $value');
 
     date = dateToDDMM(DateTime.now());
-    desc = stringWidth('DISPONÍVEL', 20);
+    desc = formatString('DISPONÍVEL', 20);
     value = formatNumber(balance(), 10);
 
     print('$date $desc $value');

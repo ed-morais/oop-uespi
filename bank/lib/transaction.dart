@@ -3,6 +3,7 @@ enum TransactionType {
   withdraw,
   transfer,
   payment,
+  interest,
 }
 
 class Transaction {
@@ -33,6 +34,8 @@ class Transaction {
         return 'Transf ${data ?? ""}';
       case TransactionType.payment:
         return 'Pagamento ${data ?? ""}';
+      case TransactionType.interest:
+        return 'Juros';
       default:
         return 'Transação desconhecida';
     }

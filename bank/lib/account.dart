@@ -10,7 +10,11 @@ enum AccountType {
   investment,
 }
 
+typedef TransactionCallback = void Function(Transaction);
+
 abstract class Account {
+  static const debugMode = true;
+
   final AccountType type;
   final int agency;
   final int number;
@@ -34,86 +38,91 @@ abstract class Account {
     }
   }
 
-  double balance() {
-    /*
-    double sum = 0.00;
-
-    for (int i = 0; i < _transactions.length; i++) {
-      sum += _transactions[i].value;
-    }
-
-    for (var trans in _transactions) {
-      sum += trans.value;
-    }
-
-    _transactions.forEach((trans) {
-      sum += trans.value;
-    });
-    */
-
-    return _transactions.fold<double>(
-      0.0,
-      (value, trans) => value + trans.value,
-    );
-  }
-
-  void deposit(double value, {Transaction? transaction}) {
+  void credit({
+    required double value,
+    required TransactionType type,
+    String? data,
+  }) {
     _checkTransactionValue(value);
 
-    transaction ??= Transaction(
-      transactionType: TransactionType.deposit,
+    _addTransaction(Transaction(
+      transactionType: type,
+      dateTime: debugMode ? randomDateTime() : null,
       ammount: value,
-    );
-
-    _addTransaction(transaction);
+      transactionData: data,
+    ));
   }
 
-  void withdraw(double value, {Transaction? transaction}) {
+  void debit({
+    required double value,
+    required TransactionType type,
+    String? data,
+  }) {
     _checkTransactionValue(value);
 
     if (value > balance()) {
       throw InsuficientFundsError();
     }
 
-    transaction ??= Transaction(
+    _addTransaction(Transaction(
       transactionType: TransactionType.withdraw,
+      dateTime: debugMode ? randomDateTime() : null,
       ammount: value,
-    );
+      transactionData: data,
+    ));
+  }
 
-    _addTransaction(transaction);
+  void sortTransactions() {
+    if (debugMode) {
+      _transactions.sort((t1, t2) => t1.date.compareTo(t2.date));
+    }
+  }
+
+  void forEachTransaction(TransactionCallback callback) {
+    for (var trans in _transactions) {
+      callback(trans);
+    }
+  }
+
+  double balance() {
+    return _transactions.fold<double>(
+      0.0,
+      (value, trans) => value + trans.value,
+    );
+  }
+
+  void deposit(double value) {
+    credit(value: value, type: TransactionType.deposit);
+  }
+
+  void withdraw(double value) {
+    debit(value: value, type: TransactionType.withdraw);
   }
 
   void transfer(Account sourceAccount, double value) {
-    Transaction trans;
-
     if (this == sourceAccount) {
       throw InvalidSourceAccountError();
     }
 
-    trans = Transaction(
-      transactionType: TransactionType.transfer,
-      ammount: value,
-      transactionData: '$agency/$number',
+    sourceAccount.debit(
+      value: value,
+      type: TransactionType.transfer,
+      data: '$agency/$number',
     );
-    sourceAccount.withdraw(value, transaction: trans);
 
-    trans = Transaction(
-      transactionType: TransactionType.transfer,
-      ammount: value,
-      transactionData: '${sourceAccount.agency}/${sourceAccount.number}',
+    credit(
+      value: value,
+      type: TransactionType.transfer,
+      data: '${sourceAccount.agency}/${sourceAccount.number}',
     );
-    deposit(value, transaction: trans);
   }
 
   void payment(double value, {String? document}) {
-    Transaction trans;
-
-    trans = Transaction(
-      transactionType: TransactionType.payment,
-      ammount: value,
-      transactionData: document,
+    debit(
+      value: value,
+      type: TransactionType.payment,
+      data: document,
     );
-    withdraw(value, transaction: trans);
   }
 
   void statement() {
@@ -122,8 +131,12 @@ abstract class Account {
     String value;
     double balance = 0.00;
 
+    desc = formatString('AG.$agency/NC.$number', 29);
+    date = dateToDDMMYY(DateTime.now());
+
     print('          BANCO EXEMPLO  S/A');
     print('           EXTRATO DE CONTA');
+    print('$desc$date');
     print('-------------------------------------');
     print('DATA  DESCRIÇÃO                 VALOR');
 
@@ -131,7 +144,7 @@ abstract class Account {
       balance += trans.value;
 
       date = dateToDDMM(trans.date);
-      desc = stringWidth(trans.description, 20);
+      desc = formatString(trans.description, 20);
       value = formatNumber(trans.value, 10);
 
       print('$date $desc $value');
@@ -139,12 +152,12 @@ abstract class Account {
     print('-------------------------------------');
 
     date = dateToDDMM(DateTime.now());
-    desc = stringWidth('SALDO', 20);
+    desc = formatString('SALDO', 20);
     value = formatNumber(balance, 10);
     print('$date $desc $value');
   }
 
-  void close();
+  void close() {}
 
   String get _typeString {
     switch (type) {
