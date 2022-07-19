@@ -1,12 +1,5 @@
-import 'package:bank/revenue_account.dart';
-import 'package:bank/saving_account.dart';
+import 'package:bank/accounts/accounts.dart';
 import 'package:faker/faker.dart';
-
-import './account.dart';
-import './current_account.dart';
-import './special_account.dart';
-import './investment_account.dart';
-import './transaction.dart';
 
 void showBalances(List<Account> accounts) {
   for (var account in accounts) {
@@ -79,7 +72,6 @@ void randomTransactionGenerator(
       account.calculateInterests();
     }
   }
-  account.sortTransactions();
 }
 
 void randomAccountGenerator(List<Account> accounts, int count) {
@@ -137,20 +129,6 @@ void randomAccountGenerator(List<Account> accounts, int count) {
         faker.randomGenerator.integer(15, min: 1),
       );
       count--;
-    }
-  }
-}
-
-void main() {
-  List<Account> accounts = [];
-
-  randomAccountGenerator(accounts, 5);
-
-  for (var account in accounts) {
-    if (account.type == AccountType.saving ||
-        account.type == AccountType.investment) {
-      account.statement();
-      break;
     }
   }
 }

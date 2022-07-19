@@ -8,7 +8,7 @@
             "name": "bank",
             "request": "launch",
             "type": "dart",
-            "program": "lib/bank.dart"
+            "program": "bin/bank.dart"
         }
     ]
 }

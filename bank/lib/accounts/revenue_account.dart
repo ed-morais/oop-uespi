@@ -1,7 +1,4 @@
-import 'package:bank/transaction.dart';
-
-import './account.dart';
-import './helpers.dart';
+part of './accounts.dart';
 
 abstract class RevenueAccount extends Account {
   final double rate;
@@ -28,7 +25,7 @@ abstract class RevenueAccount extends Account {
     super.statement();
 
     final frate = formatNumber(rate * 100.00, 10, addSuffix: false);
-    final desc = formatString('TAXA DE JUROS', 20);
+    final desc = alignString('TAXA DE JUROS', 20);
     print('      $desc$frate%');
   }
 
@@ -57,12 +54,10 @@ abstract class RevenueAccount extends Account {
     });
 
     for (var trans in transactions) {
-      credit(
+      _credit(
         value: trans.ammount,
         type: TransactionType.interest,
       );
     }
-
-    sortTransactions();
   }
 }

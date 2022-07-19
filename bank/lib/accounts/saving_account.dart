@@ -1,6 +1,4 @@
-import 'package:bank/revenue_account.dart';
-
-import 'account.dart';
+part of './accounts.dart';
 
 class SavingAccount extends RevenueAccount {
   static const savingRate = 0.0085;

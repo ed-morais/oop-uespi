@@ -1,3 +1,5 @@
+part of './accounts.dart';
+
 enum TransactionType {
   deposit,
   withdraw,

@@ -1,4 +1,4 @@
-import './account.dart';
+part of './accounts.dart';
 
 class CurrentAccount extends Account {
   CurrentAccount({

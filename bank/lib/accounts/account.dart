@@ -1,7 +1,4 @@
-import 'package:bank/exceptions.dart';
-import 'package:bank/helpers.dart';
-
-import 'transaction.dart';
+part of './accounts.dart';
 
 enum AccountType {
   current,
@@ -13,6 +10,7 @@ enum AccountType {
 typedef TransactionCallback = void Function(Transaction);
 
 abstract class Account {
+  static const statementWidth = 38;
   static const debugMode = true;
 
   final AccountType type;
@@ -38,7 +36,7 @@ abstract class Account {
     }
   }
 
-  void credit({
+  void _credit({
     required double value,
     required TransactionType type,
     String? data,
@@ -47,13 +45,13 @@ abstract class Account {
 
     _addTransaction(Transaction(
       transactionType: type,
-      dateTime: debugMode ? randomDateTime() : null,
+      dateTime: debugMode ? DateTimeFactory.random() : null,
       ammount: value,
       transactionData: data,
     ));
   }
 
-  void debit({
+  void _debit({
     required double value,
     required TransactionType type,
     String? data,
@@ -66,16 +64,10 @@ abstract class Account {
 
     _addTransaction(Transaction(
       transactionType: TransactionType.withdraw,
-      dateTime: debugMode ? randomDateTime() : null,
+      dateTime: debugMode ? DateTimeFactory.random() : null,
       ammount: value,
       transactionData: data,
     ));
-  }
-
-  void sortTransactions() {
-    if (debugMode) {
-      _transactions.sort((t1, t2) => t1.date.compareTo(t2.date));
-    }
   }
 
   void forEachTransaction(TransactionCallback callback) {
@@ -92,11 +84,11 @@ abstract class Account {
   }
 
   void deposit(double value) {
-    credit(value: value, type: TransactionType.deposit);
+    _credit(value: value, type: TransactionType.deposit);
   }
 
   void withdraw(double value) {
-    debit(value: value, type: TransactionType.withdraw);
+    _debit(value: value, type: TransactionType.withdraw);
   }
 
   void transfer(Account sourceAccount, double value) {
@@ -104,13 +96,13 @@ abstract class Account {
       throw InvalidSourceAccountError();
     }
 
-    sourceAccount.debit(
+    sourceAccount._debit(
       value: value,
       type: TransactionType.transfer,
       data: '$agency/$number',
     );
 
-    credit(
+    _credit(
       value: value,
       type: TransactionType.transfer,
       data: '${sourceAccount.agency}/${sourceAccount.number}',
@@ -118,7 +110,7 @@ abstract class Account {
   }
 
   void payment(double value, {String? document}) {
-    debit(
+    _debit(
       value: value,
       type: TransactionType.payment,
       data: document,
@@ -126,38 +118,71 @@ abstract class Account {
   }
 
   void statement() {
-    String date;
-    String desc;
+    String text1;
+    String text2;
     String value;
     double balance = 0.00;
 
-    desc = formatString('AG.$agency/NC.$number', 29);
-    date = dateToDDMMYY(DateTime.now());
+    print(alignString(
+      'BANCO EXEMPLO  S/A',
+      statementWidth,
+      align: StringAlignment.center,
+    ));
+    print(alignString(
+      'EXTRATO DE CONTA ${typeString.toUpperCase()}',
+      statementWidth,
+      align: StringAlignment.center,
+    ));
 
-    print('          BANCO EXEMPLO  S/A');
-    print('           EXTRATO DE CONTA');
-    print('$desc$date');
-    print('-------------------------------------');
-    print('DATA  DESCRIÇÃO                 VALOR');
+    text1 = dateToDDMMYY(DateTime.now());
+    text2 = alignString(
+      'AG.$agency/NC.$number',
+      statementWidth - text1.length,
+    );
+    print('$text2$text1');
+
+    print('-' * statementWidth);
+
+    text2 = 'VALOR';
+    text1 = alignString('DATA  DESCRIÇÃO', statementWidth - text2.length);
+    print('$text1$text2');
 
     for (var trans in _transactions) {
       balance += trans.value;
 
-      date = dateToDDMM(trans.date);
-      desc = formatString(trans.description, 20);
+      text1 = dateToDDMM(trans.date);
       value = formatNumber(trans.value, 10);
-
-      print('$date $desc $value');
+      text2 = alignString(
+        trans.description,
+        statementWidth - text1.length - value.length - 1,
+      );
+      print('$text1 $text2$value');
     }
-    print('-------------------------------------');
+    print('-' * statementWidth);
 
-    date = dateToDDMM(DateTime.now());
-    desc = formatString('SALDO', 20);
+    text1 = dateToDDMM(DateTime.now());
     value = formatNumber(balance, 10);
-    print('$date $desc $value');
+    text2 = alignString(
+      'SALDO',
+      statementWidth - text1.length - value.length - 1,
+    );
+    print('$text1 $text2$value');
   }
 
   void close() {}
+
+  String get typeString {
+    switch (type) {
+      case AccountType.current:
+        return 'Corrente';
+      case AccountType.special:
+        return 'Especial';
+      case AccountType.saving:
+        return 'Poupança';
+      case AccountType.investment:
+        return 'Investimento';
+    }
+  }
 
   String get _typeString {
     switch (type) {

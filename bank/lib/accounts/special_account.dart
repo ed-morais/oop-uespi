@@ -1,5 +1,4 @@
-import 'account.dart';
-import 'helpers.dart';
+part of './accounts.dart';
 
 class SpecialAccount extends Account {
   final double limit;
@@ -27,13 +26,13 @@ class SpecialAccount extends Account {
     super.statement();
 
     String date = ''.padLeft(5);
-    String desc = formatString('LIMITE', 20);
+    String desc = alignString('LIMITE', 20);
     String value = formatNumber(limit, 10);
 
     print('$date $desc $value');
 
     date = dateToDDMM(DateTime.now());
-    desc = formatString('DISPONÍVEL', 20);
+    desc = alignString('DISPONÍVEL', 20);
     value = formatNumber(balance(), 10);
 
     print('$date $desc $value');

@@ -1,6 +1,4 @@
-import 'package:bank/revenue_account.dart';
-
-import 'account.dart';
+part of './accounts.dart';
 
 class InvestmentAccount extends RevenueAccount {
   static const investmentRate = 0.0150;

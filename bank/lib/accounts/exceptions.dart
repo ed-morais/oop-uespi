@@ -1,3 +1,5 @@
+part of './accounts.dart';
+
 class TransactionError {
   @override
   String toString() => 'Transaction error';
