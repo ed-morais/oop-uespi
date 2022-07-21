@@ -14,8 +14,6 @@ void main() {
 
   randomAccountGenerator(accounts, 5);
 
-  accounts[0].statement();
-
   // for (var account in accounts) {
   //   if (account.type == AccountType.saving ||
   //       account.type == AccountType.investment) {
