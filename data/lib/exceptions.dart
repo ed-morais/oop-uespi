@@ -1,0 +1,1 @@
+class InvalidFormat implements Exception {}
