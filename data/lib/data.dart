@@ -1,10 +1,10 @@
 part of 'exchange.dart';
 
-typedef _Record = Map<String, String>;
+typedef _Record = Map<String, dynamic>;
 
 abstract class Data {
   final _data = <_Record>[];
-  final _fields = <String>{};
+  final _fields = <String>[];
 
   bool get hasData => _data.isNotEmpty;
 

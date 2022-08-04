@@ -9,7 +9,8 @@
     "id":2055,
     "name":"Carlos Alberto Souza",
     "email":"carlos@email.com",
-    "phone":"86992201122"
+    "phone":"86992201122",
+    "birth": "1980-05-22"
   },
   {
     "id":3090,

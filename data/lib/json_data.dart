@@ -11,19 +11,23 @@ class JsonData extends Data {
     final decodedData = jsonDecode(string);
 
     if (decodedData is! List) {
-      throw InvalidFormat();
+      throw InvalidFormat('Invalid format: not a JSON list');
+    }
+
+    if (decodedData.any((entry) => entry is! Map)) {
+      throw InvalidFormat('Invalid format: list element is not an object');
     }
 
     clear();
 
-    final entries = decodedData.map((elem) {
-      return (elem as Map).map<String, String>(
-        (key, value) => MapEntry(
-          key.toString(),
-          value.toString(),
-        ),
-      );
-    });
-    _data.addAll(entries);
+    for (var entry in decodedData) {
+      _data.add(entry);
+
+      for (var field in entry.keys) {
+        if (!_fields.contains(field)) {
+          _fields.add(field);
+        }
+      }
+    }
   }
 }
