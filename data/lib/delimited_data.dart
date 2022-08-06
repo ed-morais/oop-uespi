@@ -2,6 +2,7 @@ part of 'exchange.dart';
 
 abstract class DelimitedData extends Data {
   String get delimiter;
+  String get formatName;
 
   @override
   String get data {
@@ -15,9 +16,21 @@ abstract class DelimitedData extends Data {
   set data(String string) {
     final lines = string.split(RegExp(r'\n|\r|\r\n'));
 
-    int row = 0;
-    for (var line in lines) {
-      line = line.trim();
+    try {
+      final fields = lines.first.split(delimiter);
+
+      if (fields.any((field) => num.tryParse(field) != null)) {
+        throw InvalidFormat('Invalid $formatName header');
+      }
+
+      _fields.clear();
+      _fields.addAll(fields);
+    } finally {
+      clear();
+    }
+
+    for (int i = 1; i < lines.length; i++) {
+      final line = lines[i].trim();
       if (line.isEmpty) {
         continue;
       }
@@ -25,16 +38,11 @@ abstract class DelimitedData extends Data {
       final info = line.split(delimiter);
       final map = <String, dynamic>{};
 
-      if (row > 0) {
-        map.clear();
-        for (int i = 0; i < _fields.length; i++) {
-          map[_fields[i]] = info[i];
-        }
-        _data.add(map);
-      } else {
-        _fields.addAll(info);
+      map.clear();
+      for (int i = 0; i < _fields.length; i++) {
+        map[_fields[i]] = info[i];
       }
-      row++;
+      _data.add(map);
     }
   }
 }

@@ -11,5 +11,9 @@ void main() {
 
   final tsv = TsvData();
   tsv.load('files/sample.tsv');
-  print(tsv.data);
+  //print(tsv.data);
+
+  final xml = XmlData();
+  xml.load('files/sample.xml');
+  print(xml.data);
 }

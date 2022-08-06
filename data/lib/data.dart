@@ -8,7 +8,7 @@ abstract class Data {
 
   bool get hasData => _data.isNotEmpty;
 
-  List<String> get fields => _fields.toList();
+  List<String> get fields => _fields;
 
   void clear() {
     _data.clear();

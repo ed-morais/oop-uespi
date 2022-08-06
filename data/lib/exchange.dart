@@ -3,6 +3,8 @@ library exchange;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:xml/xml.dart';
+
 part './data.dart';
 part './delimited_data.dart';
 part './csv_data.dart';

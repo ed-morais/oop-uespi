@@ -14,8 +14,8 @@ class JsonData extends Data {
       throw InvalidFormat('Invalid format: not a JSON list');
     }
 
-    if (decodedData.any((entry) => entry is! Map)) {
-      throw InvalidFormat('Invalid format: list element is not an object');
+    if (decodedData.any((elem) => elem is! Map)) {
+      throw InvalidFormat('Invalid format: list element is not an JSON object');
     }
 
     clear();
